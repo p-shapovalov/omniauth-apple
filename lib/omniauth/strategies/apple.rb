@@ -48,11 +48,11 @@ module OmniAuth
 
       # from https://meta.discourse.org/t/sign-in-with-apple/122790/40
       def callback_phase
-        Rails.logger.warn "request.session_options[:session_key]: #{request.session_options[:session_key]}"
+        Rails.logger.warn "Rails.application.config.session_options[:key]: #{Rails.application.config.session_options[:key]}"
         Rails.logger.warn "request.cookies: #{request.cookies.inspect}"
-        Rails.logger.warn "request.cookies[ request.session_options[:session_key] ]: #{request.cookies[ request.session_options[:session_key] ]}"
+        Rails.logger.warn "request.cookies[ Rails.application.config.session_options[:key] ]: #{request.cookies[ Rails.application.config.session_options[:key] ]}"
 
-        if request.request_method.downcase.to_sym == :post && request.cookies[ request.session_options[:session_key] ] == nil
+        if request.request_method.downcase.to_sym == :post && request.cookies[ 'pv_session' ] == nil
           url = "#{callback_url}"
           if (code = request.params['code']) && (state = request.params['state'])
             url += "?code=#{CGI::escape(code)}"
