@@ -48,7 +48,7 @@ module OmniAuth
 
       # from https://meta.discourse.org/t/sign-in-with-apple/122790/40
       def callback_phase
-        if request.request_method.downcase.to_sym == :post
+        if request.request_method.downcase.to_sym == :post && session[:state] == nil
           url = "#{callback_url}"
           if (code = request.params['code']) && (state = request.params['state'])
             url += "?code=#{CGI::escape(code)}"
