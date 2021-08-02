@@ -46,6 +46,29 @@ module OmniAuth
         options[:redirect_uri] || (full_host + script_name + callback_path)
       end
 
+      def callback_phase
+        if request.request_method.downcase.to_sym == :post && request.cookies[ Rails.application.config.session_options[:key] ] == nil
+           url = if request.query_parameters['flutter'] != nil
+            ''
+          # from https://meta.discourse.org/t/sign-in-with-apple/122790/40
+          else "#{callback_url}"
+
+          if (code = request.params['code']) && (state = request.params['state'])
+            url += "?code=#{CGI::escape(code)}"
+            url += "&state=#{CGI::escape(state)}"
+            url += "&user=#{CGI::escape(request.params['user'])}" if request.params['user']
+          end
+          session.options[:drop] = true # Do not set a session cookie on this response
+          return redirect url
+        end
+        super
+      end
+      
+      def authorize_params
+        if(request.query_parameters['flutter'] != nil) options.authorize_params['flutter'] = 'true'
+        super
+      end
+
       private
 
       def new_nonce
