@@ -65,7 +65,9 @@ module OmniAuth
       end
       
       def authorize_params
-        if(request.query_parameters['flutter'] != nil) options.authorize_params['flutter'] = 'true'
+        if(request.query_parameters['flutter'] != nil)
+          options.authorize_params['flutter'] = 'true'
+        end
         super
       end
 
